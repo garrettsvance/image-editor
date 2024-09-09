@@ -75,11 +75,51 @@ class ImageEditor {
         if (length < 1) {
             return;
         }
-        for (int x = 0; x < image.getWidth() - 1; x >= 0; --x) {
-            for (int y = image.getHeight() -1; y >= 0; --y) {
-                Color curColor = image.length(x, y);
+        for (let x: number = 0; x < image.getWidth() - 1; x--) {
+            for (let y: number = 0; y = image.getHeight() -1; y--) {
+                let curColor: Color = image.get(x, y);
+
+                let maxX: number = Math.min(image.getWidth() -1, x + length - 1);
+                for (let i: number = x + 1; i <= maxX; i++) {
+                    let tmpColor: Color = image.get(i, y);
+                    curColor.red += tmpColor.red;
+                    curColor.green += tmpColor.green;
+                    curColor.blue += tmpColor.blue;
+                }
+
+                let delta: number = (maxX - x + 1);
+                curColor.red /= delta;
+                curColor.green /= delta;
+                curColor.blue /= delta;
             }
         }
     }
     
+}
+
+class Color {
+
+    red: number;
+    green: number;
+    blue: number;
+
+    constructor() {
+        this.red = 0;
+        this.green = 0;
+        this.blue = 0;
+    }
+}
+
+class Image {
+
+    Color[][] pixels;
+
+    Image(width: number, height: number): Color[][] {
+        let pixels = new Color[width][height];
+    }
+
+    getWidth(): pixels.length {}
+
+    getHeight(): pixels.
+
 }
