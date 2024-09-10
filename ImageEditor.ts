@@ -17,21 +17,21 @@ class ImageEditor {
 
             let image: typeof Image = new ImageEditor().read(inputFile)
 
-            if (filter.equals("grayscale") || filter.equals("greyscale")) {
+            if (filter === "grayscale" || filter === "greyscale") {
                 if (args.length != 3) {
                     new ImageEditor().usage();
                     return;
                 }
                 new ImageEditor().grayscale(image);
             } 
-            else if (filter.equals("invert")) {
+            else if (filter === "invert") {
                 if (args.length != 3) {
                     new ImageEditor().usage();
                     return;
                 }
                 new ImageEditor().invert(image);
             } 
-            else if (filter.equals("emboss")) {
+            else if (filter === "emboss") {
                 if (args.length != 3) {
                     new ImageEditor().usage();
                     return;
@@ -71,7 +71,7 @@ class ImageEditor {
         console.log("USAGE: java ImageEditor <in-file> <out-file> <grayscale|invert|emboss|motionblur> {motion-blur-length}");
     }
 
-    motionblur(image: typeof Image, length: number): void {
+    motionblur(image: Image, length: number): void {
         if (length < 1) {
             return;
         }
@@ -94,6 +94,10 @@ class ImageEditor {
             }
         }
     }
+
+    invert(iamge: typeof Image) {
+        for (let x: number = 0; x < Image.getWidth)
+    }
     
 }
 
@@ -112,14 +116,32 @@ class Color {
 
 class Image {
 
-    Color[][] pixels;
+    private pixels: Color[][]
 
-    Image(width: number, height: number): Color[][] {
-        let pixels = new Color[width][height];
+    constructor(width: number, height: number) {
+        this.pixels = [];
+        for (let x = 0; x < width; x++) {
+            this.pixels[x] = [];
+            for (let y = 0; y < height; y++) {
+                this.pixels[x][y] = new Color();
+            }
+        }
     }
 
-    getWidth(): pixels.length {}
+    getWidth(): number {
+        return this.pixels.length;
+    }
 
-    getHeight(): pixels.
+    getHeight(): number {
+        return this.pixels[0].length;
+    }
+
+    set(x: number, y: number, c: Color): void {
+        this.pixels[x][y] = c;
+    }
+
+    get(x: number, y: number): Color {
+        return this.pixels[x][y];
+    }
 
 }
