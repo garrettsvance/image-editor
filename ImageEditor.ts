@@ -95,8 +95,76 @@ class ImageEditor {
         }
     }
 
-    invert(iamge: typeof Image) {
-        for (let x: number = 0; x < Image.getWidth)
+    invert(iamge: typeof Image): void {
+        for (let x: number = 0; x < Image.getWidth(); x++) {
+            for (let y: number = 0; y < Image.getHeight(); y++) {
+                let curColor: Color = image.get(x, y);
+
+                curColor.red = 255 - curColor.red;
+                curColor.green = 255 - curColor.green;
+                curColor.blue = 255 - curColor.blue;
+            }
+        }
+    }
+
+    grayscale(image: typeof Image): void {
+        for (let x: number = 0; x < image.getWidth(); x++) {
+            for (let y: number = 0; y < image.getHeight(); y++) {
+                let curColor: Color = image.get(x, y);
+
+                let grayLevel: number = (curColor.red + curColor.green + curColor + blue) / 3;
+                grayLevel = Math.max(0, Math.min(grayLevel, 255));
+
+                curColor.red = grayLevel;
+                curColor.green = grayLevel;
+                curColor.blue = grayLevel;
+            }
+        }
+    }
+
+    emboss(image: typeof Image): void {
+        for (let x: number = image.getWidth() - 1; x >= 0; x--) {
+            for (let y: number = image.getHeight() - 1; y >= 0; y--) {
+                let curColor: Color = image.get(x, y);
+
+                let diff: number = 0;
+                if (x > 0 && y > 0) {
+                    let upLeftColor: Color = image.get(x - 1, y -1);
+                    if (Math.abs(curColor.red - upLeftColor.red) > Math.abs(diff)) {
+                        diff = curColor.red - upLeftColor.red;
+                    }
+                    if (Math.abs(curColor.green - upLeftColor.green) > Math.abs(diff)) {
+                        diff = curColor.green - upLeftColor.green;
+                    }
+                    if (Math.abs(curColor.blue - upLeftColor.blue) > Math.abs(diff)) {
+                        diff = curColor.blue - upLeftColor.blue;
+                    }
+                }
+
+                let grayLevel: number = (128 + diff);
+                grayLevel = Math.max(0, Math.min(grayLevel, 255));
+
+                curColor.red = grayLevel;
+                curColor.green = grayLevel;
+                curColor.blue = grayLevel;
+            }
+        }
+    }
+
+    read(filepath: string): typeof Image {
+        let image: typeof Image = null;
+
+        let file: InputStream = new BufferedInputStream(new FileInnputStream(filepath));
+        try {
+            let input: Scanner = new Scanner(file);
+
+            input.next();
+
+            let width: number = input.nextInt();
+            let height: number = input.nextInt();
+
+            image = 
+        }
     }
     
 }
