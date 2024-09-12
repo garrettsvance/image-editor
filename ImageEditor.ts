@@ -5,7 +5,6 @@ import * as readline from 'readline';
 
 class ImageEditor {
 
-    
     main(args: string[]): void {
         console.log('Started Application');
         new ImageEditor().run(args);
@@ -18,7 +17,7 @@ class ImageEditor {
                 this.usage();
                 return;
             }
-    
+
             let inputFile: string = args[0];
             let outputFile: string = args[1];
             let filter: string = args[2];
@@ -28,28 +27,28 @@ class ImageEditor {
             let image: PPMImage = await this.read(inputFile);
     
             if (filter === "grayscale" || filter === "greyscale") {
-                if (args.length !== 5) { // added 2 to all the lengths
+                if (args.length !== 3) { // added 2 to all the lengths
                     this.usage();
                     return;
                 }
                 this.grayscale(image);
             } 
             else if (filter === "invert") {
-                if (args.length !== 5) {
+                if (args.length !== 3) {
                     this.usage();
                     return;
                 }
                 this.invert(image);
             } 
             else if (filter === "emboss") {
-                if (args.length !== 5) {
+                if (args.length !== 3) {
                     this.usage();
                     return;
                 }
                 this.emboss(image);
             } 
             else if (filter === "motionblur") {
-                if (args.length !== 6) {
+                if (args.length !== 4) { // double check 
                     this.usage();
                     return;
                 }
@@ -116,7 +115,7 @@ class ImageEditor {
             for (let y: number = 0; y < image.getHeight(); y++) {
                 let curColor: Color = image.get(x, y);
 
-                let grayLevel: number = (curColor.red + curColor.green + curColor.blue) / 3;
+                let grayLevel: number = Math.floor((curColor.red + curColor.green + curColor.blue) / 3);
                 grayLevel = Math.max(0, Math.min(grayLevel, 255));
 
                 curColor.red = grayLevel;
@@ -162,44 +161,26 @@ class ImageEditor {
         const lines = fileContent.split(/\s+/);
 
         let image: PPMImage | null = null;
-        let lineNumber: number = 0;
         let width: number = 0;
         let height: number = 0;
 
-        for (let i: number = 0; i < lines.length; i++) {
-            const line = lines[i];
-            lineNumber++;
+        width = parseInt(lines[1], 10);
+        height = parseInt(lines[2], 10);
+        image = new PPMImage(width, height);
+        const pixels = lines.slice(4).map(Number);
 
-            if (lineNumber === 1) {
-                continue;
-            } else if (lineNumber === 2) {
-                [width, height] = line.split(' ').map(Number);
-                image = new PPMImage(width, height);
-            } else if (lineNumber === 3) {
-                continue;
-            } else {
-                if (!image) {
-                    throw new Error("Image not initialized correctly");
-                }
-                let x = 0, y = Math.floor((lineNumber - 4) / width);
-                const pixels = lines.slice(3).map(Number);
+        let pixelIndex = 0;
+        for (let y: number = 0; y < height; y++) {
+            for (let x: number = 0; x < width; x++) {
+                const color: Color = new Color();
+                color.red = pixels[pixelIndex++];
+                color.green = pixels[pixelIndex++];
+                color.blue = pixels[pixelIndex++];
 
-                for (let j = 0; j < pixels.length; j += 3) {
-                    const color = new Color();
-                    color.red = pixels[j];
-                    color.green = pixels[j + 1];
-                    color.blue = pixels[j + 2];
-
-                    if (x >= width) {
-                        x = 0;
-                        y++;
-                    }
-
-                    image.set(x++, y, color);
-                }
-                break;
+                image.set(x, y, color);
             }
         }
+
         if (!image) {
             throw new Error("Failed to initialize image");
         }
@@ -216,11 +197,13 @@ class ImageEditor {
         stream.write("255\n");
 
         for (let y = 0; y < image.getHeight(); y++) {
+            let line: string = '';
             for (let x = 0; x < image.getWidth(); x++) {
                 const color = image.get(x, y);
-                stream.write(`${color.red} ${color.green} ${color.blue} `);
+                line +=`${color.red} ${color.green} ${color.blue} `;
             }
-            stream.write("\n");
+            line = line.trim();
+            stream.write(`${line}\n`);
         }
 
         stream.end();
