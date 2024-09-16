@@ -39,6 +39,7 @@ class ImageEditor {
             let inputFile = args[0];
             let outputFile = args[1];
             let filter = args[2];
+            let mblength = args[3];
             console.log(`Input file: ${inputFile}, Output file: ${outputFile}, Filter: ${filter}`);
             let image = await this.read(inputFile);
             if (filter === "grayscale" || filter === "greyscale") {
@@ -67,11 +68,12 @@ class ImageEditor {
                     this.usage();
                     return;
                 }
-                let length = parseInt(args[5], 10); //args[3]
+                let length = parseInt(args[3], 10); //args[3]
                 if (isNaN(length) || length < 0) {
                     this.usage();
                     return;
                 }
+                console.log(`Motion Blur Length: ${length}`);
                 this.motionblur(image, length);
             }
             else {
@@ -90,20 +92,23 @@ class ImageEditor {
         if (length < 1) {
             return;
         }
-        for (let x = 0; x < image.getWidth() - 1; x--) {
-            for (let y = 0; y = image.getHeight() - 1; y--) {
+        for (let x = 0; x < image.getWidth(); x++) {
+            for (let y = 0; y < image.getHeight(); y++) {
                 let curColor = image.get(x, y);
                 let maxX = Math.min(image.getWidth() - 1, x + length - 1);
+                let totalRed = curColor.red;
+                let totalGreen = curColor.green;
+                let totalBlue = curColor.blue;
                 for (let i = x + 1; i <= maxX; i++) {
                     let tmpColor = image.get(i, y);
-                    curColor.red += tmpColor.red;
-                    curColor.green += tmpColor.green;
-                    curColor.blue += tmpColor.blue;
+                    totalRed += tmpColor.red;
+                    totalGreen += tmpColor.green;
+                    totalBlue += tmpColor.blue;
                 }
                 let delta = (maxX - x + 1);
-                curColor.red /= delta;
-                curColor.green /= delta;
-                curColor.blue /= delta;
+                curColor.red = Math.floor(totalRed / delta);
+                curColor.green = Math.floor(totalGreen / delta);
+                curColor.blue = Math.floor(totalBlue / delta);
             }
         }
     }
@@ -236,7 +241,8 @@ class PPMImage {
 const arg1 = process.argv[2];
 const arg2 = process.argv[3];
 const arg3 = process.argv[4];
-const argArray = [arg1, arg2, arg3];
+const arg4 = process.argv[5];
+const argArray = [arg1, arg2, arg3, arg4];
 const ImageEditorObj = new ImageEditor();
 ImageEditorObj.run(argArray);
 //# sourceMappingURL=ImageEditor.js.map

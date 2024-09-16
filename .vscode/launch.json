@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "args": ["sunset.ppm", "inverted_sunset.ppm", "invert"],
+            "args": ["sunset.ppm", "mb_sunset.ppm", "motionblur", "10"],
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
